@@ -77,9 +77,13 @@ WSGI_APPLICATION = 'curse.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'music_store',
+        'USER': 'root',
+        'PASSWORD': 'Wtd2hfft914',
+        'HOST': 'localhost',  # Set to the appropriate MySQL server host
+        'PORT': '3306',       # Set to the appropriate MySQL server port
     }
 }
 
