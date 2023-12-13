@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path 
 import os, sys
+import pymysql
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -82,8 +83,11 @@ DATABASES = {
         'NAME': 'music_store',
         'USER': 'root',
         'PASSWORD': 'Wtd2hfft914',
-        'HOST': 'localhost',  # Set to the appropriate MySQL server host
-        'PORT': '3306',       # Set to the appropriate MySQL server port
+        'HOST': 'localhost',
+        'PORT': '3306',
+                'OPTIONS': {
+            'charset': 'utf8mb4',
+        },
     }
 }
 
@@ -128,3 +132,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+pymysql.version_info = (1, 4, 6, "final", 0)
+pymysql.install_as_MySQLdb()
