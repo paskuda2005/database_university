@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ block.super }} - Make Order{% endblock %}
+
+{% block content_title %}Make Order{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center mb-4">Order Details</h2>
+                        <p class="card-text"><strong>Product:</strong> {{ product.Name }}</p>
+                        <p class="card-text"><strong>Description:</strong> {{ product.Description }}</p>
+                        <p class="card-text"><strong>Price:</strong> ${{ product.Price }}</p>
+                        <form method="post" action="">
+                            {% csrf_token %}
+                            <div class="mb-3">
+                                <label for="id_quantity" class="form-label">Quantity</label>
+                                {{ form.quantity }}
+                            </div>
+                            <!-- Add hidden fields for other required information -->
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <!-- Add any other hidden fields needed for the order -->
+                            <button type="submit" class="btn btn-primary mt-3">Submit Order</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

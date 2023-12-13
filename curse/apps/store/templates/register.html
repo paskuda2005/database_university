@@ -1,0 +1,25 @@
+<!-- register.html -->
+{% extends 'base.html' %}
+
+{% block title %}{{ block.super }} - Register{% endblock %}
+
+{% block content_title %}Register{% endblock %}
+
+{% block content %}
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-body">
+                        <h2 class="card-title text-center">Register</h2>
+                        <form method="post" action="{% url 'register' %}">
+                            {% csrf_token %}
+                            {{ form.as_p }}
+                            <button type="submit" class="btn btn-primary mt-3">Register</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

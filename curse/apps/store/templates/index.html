@@ -1,67 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'base.html' %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Music Store</title>
+{% block title %}{{ block.super }} - Home{% endblock %}
 
-    {% load bootstrap5 %}
-    {% bootstrap_css %}
-    {% bootstrap_javascript %}
-</head>
+{% block content_title %}Welcome to Our Music Store{% endblock %}
 
-<body>
+{% block content %}
+    <p>
+        Welcome to our fictional music store, where you can explore and purchase a variety of musical instruments.
+        Whether you're a professional musician or just getting started, we have something for everyone!
+    </p>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">Music Store</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Genres</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Artists</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Albums</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="#">Contact</a>
-                    </li>
-                </ul>
+    <div class="row mt-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Explore Products</h5>
+                    <p class="card-text">Browse our collection of instruments and accessories.</p>
+                    <a href="{% url 'products' %}" class="btn btn-primary">Explore</a>
+                </div>
             </div>
         </div>
-    </nav>
 
-    <div class="container mt-4">
-        <h1>Welcome to our Music Store</h1>
-        <div class="row mt-4">
-            {% for product in products %}
-                <div class="col-md-4">
-                    <div class="card">
-                        <img src="{{ product.Image_url }}" class="card-img-top" alt="{{ product.Name }} Cover">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ product.Name }}</h5>
-                            <p class="card-text">{{ product.Description }}</p>
-                            <p class="card-text">Price: ${{ product.Price }}</p>
-                            <a href="#" class="btn btn-primary">Buy Now</a>
-                        </div>
+        {% if user.is_authenticated %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Your Orders</h5>
+                        <p class="card-text">View and manage your order history.</p>
+                        <a href="{% url 'orders' %}" class="btn btn-primary">View Orders</a>
                     </div>
                 </div>
-            {% endfor %}
-        </div>
+            </div>
+        {% else %}
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Login</h5>
+                        <p class="card-text">Already a member? Login to access your account.</p>
+                        <a href="{% url 'login' %}" class="btn btn-primary">Login</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
     </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-
-</html>
+{% endblock %}

@@ -1,74 +1,65 @@
 from django.db import models
+from django.contrib.auth.models import AbstractUser, BaseUserManager, Permission
+from django.conf import settings
 
+class CustomUserManager(BaseUserManager):
+    def create_user(self, email, password=None, **extra_fields):
+        if not email:
+            raise ValueError('The Email field must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email, **extra_fields)
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
 
-from django.db import models
+    def create_superuser(self, email, password=None, **extra_fields):
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
 
-class Clients(models.Model):
-    ID = models.IntegerField(primary_key=True)
-    First_Name = models.CharField(max_length=50, null=True, blank=True)
-    Last_Name = models.CharField(max_length=50, null=True, blank=True)
+        return self.create_user(email, password, **extra_fields)
+
+class CustomUser(AbstractUser):
     Address = models.CharField(max_length=255, null=True, blank=True)
     Phone = models.CharField(max_length=15, null=True, blank=True)
-    Email = models.CharField(max_length=100, null=True, blank=True)
+    
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
-    class Meta:
-        db_table = 'clients'
+    objects = CustomUserManager()
+
+CustomUser._meta.get_field('groups').remote_field.related_name = 'notyuser_groups'
+CustomUser._meta.get_field('user_permissions').remote_field.related_name = 'notyuser_user_permissions'
 
 class InstrumentCategories(models.Model):
-    ID = models.IntegerField(primary_key=True)
     Name = models.CharField(max_length=100, null=True, blank=True)
 
-    class Meta:
-        db_table = 'instrument_categories'
-
 class Manufacturers(models.Model):
-    ID = models.IntegerField(primary_key=True)
     Name = models.CharField(max_length=100, null=True, blank=True)
     Country = models.CharField(max_length=50, null=True, blank=True)
 
-    class Meta:
-        db_table = 'manufacturers'
-
-class Orders(models.Model):
-    ID = models.IntegerField(primary_key=True)
-    Client_ID = models.IntegerField(null=True, blank=True, db_column='Client_ID')
-    Order_Date = models.DateField(null=True, blank=True)
-    Total_Price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    Product_ID = models.IntegerField(null=True, blank=True, db_column='Product_ID')
-
-    class Meta:
-        db_table = 'orders'
-
-class Payments(models.Model):
-    ID = models.IntegerField(primary_key=True)
-    Order_ID = models.IntegerField(null=True, blank=True, db_column='Order_ID')
-    Amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    Payment_Date = models.DateField(null=True, blank=True)
-
-    class Meta:
-        db_table = 'payments'
-
 class Products(models.Model):
-    ID = models.IntegerField(primary_key=True)
     Name = models.CharField(max_length=255, null=True, blank=True)
     Description = models.TextField(null=True, blank=True)
     Price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     Quantity = models.IntegerField(null=True, blank=True)
     Category = models.CharField(max_length=100, null=True, blank=True)
-    Manufacturer_ID = models.IntegerField(null=True, blank=True, db_column='Manufacturer_ID')
-    Image_url = models.TextField(max_length=2000, blank=True, db_column='image_url')
+    Manufacturer = models.ForeignKey(Manufacturers, on_delete=models.SET_NULL, null=True, blank=True)
+    Image_url = models.TextField(max_length=2000, blank=True)
 
-    class Meta:
-        db_table = 'products'
+class Orders(models.Model):
+    Client = models.ForeignKey(CustomUser, on_delete=models.CASCADE, null=True, blank=True)
+    Order_Date = models.DateField(null=True, blank=True)
+    Total_Price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    Product = models.ForeignKey(Products, on_delete=models.CASCADE, null=True, blank=True)
+    Client_name = models.CharField(max_length=255, null=True, blank=True)
+    Address = models.CharField(max_length=255, null=True, blank=True)
+
+class Payments(models.Model):
+    Order = models.ForeignKey(Orders, on_delete=models.CASCADE, null=True, blank=True)
+    Amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    Payment_Date = models.DateField(null=True, blank=True)
 
 class Sales(models.Model):
-    ID = models.IntegerField(primary_key=True)
-    Product_ID = models.IntegerField(null=True, blank=True, db_column='Product_ID')
-    Order_ID = models.IntegerField(null=True, blank=True, db_column='Order_ID')
+    Product = models.ForeignKey(Products, on_delete=models.CASCADE, null=True, blank=True)
+    Order = models.ForeignKey(Orders, on_delete=models.CASCADE, null=True, blank=True)
     Quantity = models.IntegerField(null=True, blank=True)
     Sale_Price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-
-    class Meta:
-        db_table = 'sales'
-
-
